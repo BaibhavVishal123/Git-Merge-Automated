@@ -1,0 +1,9 @@
+postgres:
+  host: localhost
+  database: digi_users
+  username: postgres
+  password: shpassword
+  pool:
+    max: 10
+    min: 1
+    idle: 10e3
