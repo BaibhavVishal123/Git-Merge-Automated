@@ -1,4 +1,4 @@
-var MY_SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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";
+var MY_SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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"; 
 //'https://myaccountname.slack.com/services/hooks/incoming-webhook?token=myToken';
 
 var slack = require('slack-notify')(MY_SLACK_WEBHOOK_URL);
@@ -84,6 +84,12 @@ module.exports.sendFail = function (user) {
             'latestCommitId': user.commitId,
             'commitMessage': user.message
         }
+    }, function (err) {
+        if (err) {
+            console.log('API error:', err);
+        } else {
+            console.log('Message received!');
+        }
     });
 }
 
@@ -99,5 +105,12 @@ module.exports.sendSuccess = function (user) {
             'Author': user.name,
             'commitMessage': user.message
         }
+    }, function (err) {
+        if (err) {
+            console.log('API error:', err);
+        } else {
+            console.log('Message received!');
+        }
     });
 }
+

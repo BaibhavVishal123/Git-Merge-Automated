@@ -43,16 +43,8 @@ routes.post('/webhook', async function (req, res, next) {
   const folder = path.join(__dirname, baseRepoFolder);
 
   var doneCloning = false;
-  fsExtra.ensureDir(folder)
-    .then(async () => {
-      console.log('Repo Cloned Previously!');
-      doneCloning = true;
-      await git().
-        outputHandler((command, stdout, stderr) => {
-          // stdout.pipe(process.stdout);
-          stderr.pipe(process.stderr);
-        }).fetch("origin");
-    })
+  //doneCloning= true;  
+  console.log("cloning will happen", doneCloning);
   if (!doneCloning) {
     doneCloning = await git().
       outputHandler((command, stdout, stderr) => {
@@ -60,7 +52,8 @@ routes.post('/webhook', async function (req, res, next) {
         stderr.pipe(process.stderr);
       }).clone(remote);
   }
-
+  
+  console.log("Checkout Branches in Progress");
   //promise
   await git(baseRepoFolder).
     outputHandler((command, stdout, stderr) => {
@@ -80,9 +73,9 @@ routes.post('/webhook', async function (req, res, next) {
         outputHandler((command, stdout, stderr) => {
           // stdout.pipe(process.stdout);
           stderr.pipe(process.stderr);
-        }).mergeFromTo("release/chromium develop");
+        }).mergeFromTo("release/chromium", "develop", `-m Merging ${branches[0]} to develop`);
 
-      console.log("merged?");
+      console.log("merged!");
 
       // TODO: check push
       await git(baseRepoFolder).
@@ -92,8 +85,12 @@ routes.post('/webhook', async function (req, res, next) {
         push("origin", "develop", () => {
           console.log("Develop pushed");
         });
+	console.log("pushed!");
 
+      
+      deleteFolderRecursive(baseRepoFolder);
       // succes slack noti asynchronous call
+
       triggerSlackEmail(authorNew, false);
       resolve(true);
     }
@@ -101,14 +98,9 @@ routes.post('/webhook', async function (req, res, next) {
 
       console.error("aaaaa:", err);
       // delete repo folder no waiting
-      deleteFolderRecursive(folder);
+      deleteFolderRecursive(baseRepoFolder);
 
 
-      /*       fsExtra.removeSync(folder, err => {
-              console.error(err)
-            }) */
-
-      // asynchronous fail slack+email
       triggerSlackEmail(authorNew);
       return false;
     }
@@ -116,7 +108,7 @@ routes.post('/webhook', async function (req, res, next) {
 
   console.log(merge);
 
-  res.send({ "merge": merge });
+  res.status(200).send('ok');
   //res.render('index', {title: 'WebHook'});
 })
 
