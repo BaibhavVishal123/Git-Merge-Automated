@@ -7,6 +7,7 @@ const fsExtra = require('fs-extra')
 
 
 const baseRepoFolder = "atum-barium";
+const branches = ["release/chromium"]
 
 
 const mail = require("../services/mail.js");
@@ -18,7 +19,7 @@ routes.post('/webhook', async function (req, res, next) {
   let gitCommitJSON = req.body.push.changes[0].new;
 
   // Check if latest commit is on release/chromium
-  if (gitCommitJSON.name != "release/chromium") {
+  if (gitCommitJSON.name != branches[0]) {
     // exit program
     res.status(200).send("Invalid Branch");
   }
@@ -38,7 +39,8 @@ routes.post('/webhook', async function (req, res, next) {
 
   const REPO = 'bitbucket.org/stratbeans/atum-barium';
   const remote = `https://${REPO}`;
-  const folder = path.join(__dirname, "routes", baseRepoFolder);
+  // check routes?
+  const folder = path.join(__dirname, baseRepoFolder);
 
   var doneCloning = false;
   fsExtra.ensureDir(folder)
