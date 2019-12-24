@@ -63,7 +63,7 @@ routes.post('/webhook', async function (req, res, next) {
   }
 
   console.log("Checkout Branches in Progress");
-  //promise
+  //TODO: Comment out and check
   await git(baseRepoFolder).
     outputHandler((command, stdout, stderr) => {
       // stdout.pipe(process.stdout);

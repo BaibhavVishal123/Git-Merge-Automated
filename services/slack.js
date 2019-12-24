@@ -4,7 +4,7 @@ var MY_SLACK_WEBHOOK_URL = config.slack.url;
 var slack = require('slack-notify')(MY_SLACK_WEBHOOK_URL);
 
 
-module.exports.sendFail = function (user) {
+module.exports.sendFail = function (user, error) {
     var mergeStatus = slack.extend({
         channel: '#mergeIssuesABDevelop',
         icon_emoji: ':computer:',
@@ -16,7 +16,8 @@ module.exports.sendFail = function (user) {
             'Author': user.name,
             'Email': user.email,
             'latestCommitId': user.commitId,
-            'commitMessage': user.message
+            'commitMessage': user.message,
+            'error': error
         }
     }, function (err) {
         if (err) {
