@@ -5,6 +5,7 @@ var slack = require('slack-notify')(MY_SLACK_WEBHOOK_URL);
 
 
 module.exports.sendFail = function (user, error) {
+    console.log("log check slack");
     console.log("In slack method error:", error);
     var mergeStatus = slack.extend({
         channel: '#mergeIssuesABDevelop',

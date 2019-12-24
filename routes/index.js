@@ -21,10 +21,12 @@ routes.post('/webhook', async function (req, res, next) {
 
   // Check if latest commit is on configured source branches
   let execution = false;
+  let source = "";
   branches.forEach(element => {
     console.log("Checked branch", gitCommitJSON.name, "against branch ", element);
     if (element == gitCommitJSON.name) {
       execution = true;
+      source = element;
     }
   });
 
@@ -68,7 +70,7 @@ routes.post('/webhook', async function (req, res, next) {
     outputHandler((command, stdout, stderr) => {
       // stdout.pipe(process.stdout);
       stderr.pipe(process.stderr);
-    }).checkout(["release/chromium"]);
+    }).checkout([source]);
 
   await git(baseRepoFolder).
     outputHandler((command, stdout, stderr) => {
@@ -82,7 +84,7 @@ routes.post('/webhook', async function (req, res, next) {
         outputHandler((command, stdout, stderr) => {
           // stdout.pipe(process.stdout);
           stderr.pipe(process.stderr);
-        }).mergeFromTo("release/chromium", target, `-m Merging ${branches[0]} to ${target}`);
+        }).mergeFromTo(source, target, `-m Merging ${branches[0]} to ${target}`);
 
       console.log("merged!");
 
@@ -122,12 +124,14 @@ routes.post('/webhook', async function (req, res, next) {
 
 
 
-async function triggerSlackEmail(user, sendEmail = true, error = null) {
+async function triggerSlackEmail(user, sendEmail = true, error = "none") {
   if (sendEmail) {
+    console.log("send email block--------");
     // send failure email using nodemailer, subject merge error, to latest commits' author
+    console.log("before sending mail error:", error);
     mail.send(user.email, error);
     //send failure slack notification
-    console.log("befor sending error:", error);
+    console.log("after sending mail error:", error);
     slack.sendFail(user, error)
   }
   else {
