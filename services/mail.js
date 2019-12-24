@@ -32,7 +32,8 @@ function main(email, error) {
             to: email, // list of receivers
             subject: "Automated Merge Failed ✔", // Subject line
             text: "Please Merge latest commit manually to develop", // plain text body
-            html: `<b>Please Merge latest commit manually to develop. <br><br><br>Error Stack Trace: </b><br><p>${error}</p>` // html body
+            html: `<b>Please Merge latest commit manually to develop. <br><br><br><b>${error.message}</b>
+            <br>Error Stack Trace: <br><p>${error.stack}</p>` // html body
         });
 
         console.log("Message sent: %s", info.messageId);
