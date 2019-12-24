@@ -31,8 +31,11 @@ function main(user, error) {
             from: '"Git Merge Bot 👻" <gitBot@stratbeans.com>', // sender address
             to: user.email, // list of receivers
             subject: "Automated Merge Failed ✔", // Subject line
-            text: `Please Merge latest commit "${user.message},  ${user.commitId}"  manually`, // plain text body
-            html: `<b>Please Merge latest commit manually to up(${config.branches.target})/down stream(${config.branches.source}).
+            text: `<b>Please Merge latest commit "${user.message},  ${user.commitId}"  
+                manually to up(${config.branches.target})/down stream(${config.branches.source}).  
+                <br><br><br><b>${error.message}</b><br><br>Error Stack Trace: <br><p><pre>${error.stack}</pre></p>`,// html body
+            html: `<b>Please Merge latest commit "${user.message},  ${user.commitId}"  
+                manually to up(${config.branches.target})/down stream(${config.branches.source}).
                 <br><br><br><b>${error.message}</b><br><br>Error Stack Trace: <br><p><pre>${error.stack}</pre></p>` // html body
         });
 
