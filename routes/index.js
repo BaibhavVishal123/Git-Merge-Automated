@@ -109,7 +109,7 @@ routes.post('/webhook', async function (req, res, next) {
       // delete repo folder no waiting
       console.log("Deleting Repo due to: ", err);
       deleteFolderRecursive(baseRepoFolder);
-      triggerSlackEmail(authorNew, error = err);
+      triggerSlackEmail(authorNew, true, err);
       return false;
     }
   })
@@ -127,6 +127,7 @@ async function triggerSlackEmail(user, sendEmail = true, error = null) {
     // send failure email using nodemailer, subject merge error, to latest commits' author
     mail.send(user.email, error);
     //send failure slack notification
+    console.log("befor sending error:", error);
     slack.sendFail(user, error)
   }
   else {
