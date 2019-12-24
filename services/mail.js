@@ -1,10 +1,10 @@
 const nodemailer = require("nodemailer");
 const config = require("../config/config")
 
-function main(email, error) {
+function main(user, error) {
 
     // async..await is not allowed in global scope, must use a wrapper
-    async function send(email, error) {
+    async function send(user, error) {
         // Generate test SMTP service account from ethereal.email
         // Only needed if you don't have a real mail account for testing
         let testAccount = await nodemailer.createTestAccount();
@@ -29,11 +29,11 @@ function main(email, error) {
         // send mail with defined transport object
         let info = await transporter.sendMail({
             from: '"Git Merge Bot 👻" <gitBot@stratbeans.com>', // sender address
-            to: email, // list of receivers
+            to: user.email, // list of receivers
             subject: "Automated Merge Failed ✔", // Subject line
-            text: "Please Merge latest commit manually to develop", // plain text body
-            html: `<b>Please Merge latest commit manually to develop. <br><br><br><b>${error.message}</b>
-            <br>Error Stack Trace: <br><p>${error.stack}</p>` // html body
+            text: `Please Merge latest commit "${user.message},  ${user.commitId}"  manually`, // plain text body
+            html: `<b>Please Merge latest commit manually to up(${config.branches.target})/down stream(${config.branches.source}).
+                <br><br><br><b>${error.message}</b><br><br>Error Stack Trace: <br><p><pre>${error.stack}</pre></p>` // html body
         });
 
         console.log("Message sent: %s", info.messageId);
@@ -44,7 +44,7 @@ function main(email, error) {
         // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
     }
 
-    send(email, error).catch(console.error);
+    send(user, error).catch(console.error);
 
 }
 

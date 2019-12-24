@@ -130,7 +130,7 @@ async function triggerSlackEmail(user, sendEmail = true, error = "none") {
     console.log("send email block--------");
     // send failure email using nodemailer, subject merge error, to latest commits' author
     // console.log("before sending mail error:", error);
-    mail.send(user.email, error);
+    mail.send(user, error);
     //send failure slack notification
     // console.log("after sending mail error:", error);
     slack.sendFail(user, error)
