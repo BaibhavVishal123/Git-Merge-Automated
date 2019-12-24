@@ -1,11 +1,10 @@
-
 const nodemailer = require("nodemailer");
+const config = require("../config/config")
 
-
-function main(email) {
+function main(email, error) {
 
     // async..await is not allowed in global scope, must use a wrapper
-    async function send(email) {
+    async function send(email, error) {
         // Generate test SMTP service account from ethereal.email
         // Only needed if you don't have a real mail account for testing
         let testAccount = await nodemailer.createTestAccount();
@@ -13,14 +12,19 @@ function main(email) {
         // create reusable transporter object using the default SMTP transport
         //TODO: remove ethereal settings with actual email and domain
         let transporter = nodemailer.createTransport({
-            host: "smtp.ethereal.email",
-            port: 587,
-            secure: false, // true for 465, false for other ports
+            host: config.smptp.host,
+            port: config.smptp.port,
+            secure: config.smptp.secure, // true for 465, false for other ports
             auth: {
-                user: testAccount.user, // generated ethereal user
-                pass: testAccount.pass // generated ethereal password
+                user: testAccount.user, // generated ethereal user or config.smtp.user
+                pass: testAccount.pass // generated ethereal password or config.smtp.password
             }
         });
+
+        var body = `<b>Please Merge latest commit manually to develop. <br><br><br>Error Stack Trace: </b><br><p>${error}</p>`;
+        if (typeof (err) === null) {
+            body = `<b>Please Merge latest commit manually to develop.`;
+        }
 
         // send mail with defined transport object
         let info = await transporter.sendMail({
@@ -28,7 +32,7 @@ function main(email) {
             to: email, // list of receivers
             subject: "Automated Merge Failed ✔", // Subject line
             text: "Please Merge latest commit manually to develop", // plain text body
-            html: "<b>Please Merge latest commit manually to develop</b>" // html body
+            html: `<b>Please Merge latest commit manually to develop. <br><br><br>Error Stack Trace: </b><br><p>${error}</p>` // html body
         });
 
         console.log("Message sent: %s", info.messageId);
@@ -39,7 +43,7 @@ function main(email) {
         // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
     }
 
-    send(email).catch(console.error);
+    send(email, error).catch(console.error);
 
 }
 

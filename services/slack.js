@@ -1,7 +1,52 @@
-var MY_SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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"; 
+const config = require("../config/config");
+var MY_SLACK_WEBHOOK_URL = config.slack.url;
 //'https://myaccountname.slack.com/services/hooks/incoming-webhook?token=myToken';
-
 var slack = require('slack-notify')(MY_SLACK_WEBHOOK_URL);
+
+
+module.exports.sendFail = function (user) {
+    var mergeStatus = slack.extend({
+        channel: '#mergeIssuesABDevelop',
+        icon_emoji: ':computer:',
+        username: 'MergeBot'
+    });
+    mergeStatus({
+        text: "Failed Merge: Conflict",
+        fields: {
+            'Author': user.name,
+            'Email': user.email,
+            'latestCommitId': user.commitId,
+            'commitMessage': user.message
+        }
+    }, function (err) {
+        if (err) {
+            console.log('API error:', err);
+        } else {
+            console.log('Message received!');
+        }
+    });
+}
+
+module.exports.sendSuccess = function (user) {
+    var mergeStatus = slack.extend({
+        channel: '#mergeIssuesABDevelop',
+        icon_emoji: ':computer:',
+        username: 'MergeBot'
+    });
+    mergeStatus({
+        text: "Merge Succeded",
+        fields: {
+            'Author': user.name,
+            'commitMessage': user.message
+        }
+    }, function (err) {
+        if (err) {
+            console.log('API error:', err);
+        } else {
+            console.log('Message received!');
+        }
+    });
+}
 
 // refer this for different slack notification
 function examples() {
@@ -69,48 +114,3 @@ function examples() {
         console.log('API error:', err);
     };
 }
-
-module.exports.sendFail = function (user) {
-    var mergeStatus = slack.extend({
-        channel: '#mergeIssuesABDevelop',
-        icon_emoji: ':computer:',
-        username: 'MergeBot'
-    });
-    mergeStatus({
-        text: "Failed Merge: Conflict",
-        fields: {
-            'Author': user.name,
-            'Email': user.email,
-            'latestCommitId': user.commitId,
-            'commitMessage': user.message
-        }
-    }, function (err) {
-        if (err) {
-            console.log('API error:', err);
-        } else {
-            console.log('Message received!');
-        }
-    });
-}
-
-module.exports.sendSuccess = function (user) {
-    var mergeStatus = slack.extend({
-        channel: '#mergeIssuesABDevelop',
-        icon_emoji: ':computer:',
-        username: 'MergeBot'
-    });
-    mergeStatus({
-        text: "Merge Succeded",
-        fields: {
-            'Author': user.name,
-            'commitMessage': user.message
-        }
-    }, function (err) {
-        if (err) {
-            console.log('API error:', err);
-        } else {
-            console.log('Message received!');
-        }
-    });
-}
-

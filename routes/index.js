@@ -3,11 +3,12 @@ var routes = express.Router();
 const git = require('simple-git/promise');
 const fs = require('fs');
 const path = require('path');
-const fsExtra = require('fs-extra')
 
+const config = require("../config/config");
 
 const baseRepoFolder = "atum-barium";
-const branches = ["release/chromium"]
+const branches = config.branches.source;
+const target = config.branches.target;
 
 
 const mail = require("../services/mail.js");
@@ -18,8 +19,16 @@ routes.post('/webhook', async function (req, res, next) {
 
   let gitCommitJSON = req.body.push.changes[0].new;
 
-  // Check if latest commit is on release/chromium
-  if (gitCommitJSON.name != branches[0]) {
+  // Check if latest commit is on configured source branches
+  let execution = false;
+  branches.forEach(element => {
+    console.log("Checked branch", gitCommitJSON.name, "against branch ", element);
+    if (element == gitCommitJSON.name) {
+      execution = true;
+    }
+  });
+
+  if (!execution) {
     // exit program
     res.status(200).send("Invalid Branch");
   }
@@ -52,7 +61,7 @@ routes.post('/webhook', async function (req, res, next) {
         stderr.pipe(process.stderr);
       }).clone(remote);
   }
-  
+
   console.log("Checkout Branches in Progress");
   //promise
   await git(baseRepoFolder).
@@ -65,7 +74,7 @@ routes.post('/webhook', async function (req, res, next) {
     outputHandler((command, stdout, stderr) => {
       // stdout.pipe(process.stdout);
       stderr.pipe(process.stderr);
-    }).checkout(["develop"]);
+    }).checkout([target]);
 
   var merge = await new Promise(async (resolve, reject) => {
     try {
@@ -73,7 +82,7 @@ routes.post('/webhook', async function (req, res, next) {
         outputHandler((command, stdout, stderr) => {
           // stdout.pipe(process.stdout);
           stderr.pipe(process.stderr);
-        }).mergeFromTo("release/chromium", "develop", `-m Merging ${branches[0]} to develop`);
+        }).mergeFromTo("release/chromium", target, `-m Merging ${branches[0]} to ${target}`);
 
       console.log("merged!");
 
@@ -82,26 +91,25 @@ routes.post('/webhook', async function (req, res, next) {
         outputHandler((command, stdout, stderr) => {
           stderr.pipe(process.stderr);
         }).
-        push("origin", "develop", () => {
-          console.log("Develop pushed");
+        push("origin", target, () => {
+          console.log(`${target} pushed`);
         });
-	console.log("pushed!");
+      console.log("pushed!");
 
-      
+
       deleteFolderRecursive(baseRepoFolder);
       // succes slack noti asynchronous call
 
       triggerSlackEmail(authorNew, false);
+      console.log("Deleting Repo");
+      deleteFolderRecursive(folder);
       resolve(true);
     }
     catch (err) {
-
-      console.error("aaaaa:", err);
       // delete repo folder no waiting
+      console.log("Deleting Repo due to: ", err);
       deleteFolderRecursive(baseRepoFolder);
-
-
-      triggerSlackEmail(authorNew);
+      triggerSlackEmail(authorNew, error = err);
       return false;
     }
   })
@@ -114,12 +122,12 @@ routes.post('/webhook', async function (req, res, next) {
 
 
 
-async function triggerSlackEmail(user, sendEmail = true) {
+async function triggerSlackEmail(user, sendEmail = true, error = null) {
   if (sendEmail) {
     // send failure email using nodemailer, subject merge error, to latest commits' author
-    mail.send(user.email);
+    mail.send(user.email, error);
     //send failure slack notification
-    slack.sendFail(user)
+    slack.sendFail(user, error)
   }
   else {
     //send success slack notification using request
@@ -129,7 +137,6 @@ async function triggerSlackEmail(user, sendEmail = true) {
 
 
 var deleteFolderRecursive = function (path) {
-  console.log("Deleting Conflicted Repo");
   if (fs.existsSync(path)) {
     fs.readdirSync(path).forEach(function (file, index) {
       var curPath = path + "/" + file;
