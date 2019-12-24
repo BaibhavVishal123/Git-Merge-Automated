@@ -112,6 +112,7 @@ routes.post('/webhook', async function (req, res, next) {
       console.log("Deleting Repo due to: ", err);
       deleteFolderRecursive(baseRepoFolder);
       triggerSlackEmail(authorNew, true, err);
+      res.status(400).send("Bad Merge  Branches");
       return false;
     }
   })
@@ -128,10 +129,10 @@ async function triggerSlackEmail(user, sendEmail = true, error = "none") {
   if (sendEmail) {
     console.log("send email block--------");
     // send failure email using nodemailer, subject merge error, to latest commits' author
-    console.log("before sending mail error:", error);
+    // console.log("before sending mail error:", error);
     mail.send(user.email, error);
     //send failure slack notification
-    console.log("after sending mail error:", error);
+    // console.log("after sending mail error:", error);
     slack.sendFail(user, error)
   }
   else {

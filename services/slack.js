@@ -17,7 +17,8 @@ module.exports.sendFail = function (user, error) {
             'Email': user.email,
             'latestCommitId': user.commitId,
             'commitMessage': user.message,
-            'error': JSON.stringify(error)
+	    'error': error.message,
+	    'Error Description': "Check Mail for StackTrace" 
         }
     }, function (err) {
         if (err) {
