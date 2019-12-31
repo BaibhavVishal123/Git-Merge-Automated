@@ -4,7 +4,7 @@ const git = require('simple-git/promise');
 const fs = require('fs');
 const path = require('path');
 
-const config = require("../config/config");
+const config = require("../config/test.config");
 
 const baseRepoFolder = "atum-barium";
 const branches = config.branches.source;
@@ -17,7 +17,15 @@ routes.post('/webhook', async function (req, res, next) {
   // console.log(JSON.stringify(req.body, null, 2));
 
 
-  let gitCommitJSON = req.body.push.changes[0].new;
+  let gitCommitJSON = req.body.push.changes[0].new; //req.body is actual payload
+
+  // Testing payload
+  const payload = require("../config/commit.simple");
+  //config.
+  //  payload.repository.full_name
+
+
+  console.log("reeceived payload ----------------------------", gitCommitJSON);
 
   // Check if latest commit is on configured source branches
   let execution = false;

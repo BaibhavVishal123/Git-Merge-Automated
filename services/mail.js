@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const config = require("../config/config")
+const config = require("../config/test.config")
 
 function main(user, error) {
 
@@ -12,12 +12,14 @@ function main(user, error) {
         // create reusable transporter object using the default SMTP transport
         //TODO: remove ethereal settings with actual email and domain
         let transporter = nodemailer.createTransport({
-            host: config.smptp.host,
-            port: config.smptp.port,
-            secure: config.smptp.secure, // true for 465, false for other ports
+            host: config.smtp.host,
+            port: config.smtp.port,
+            secure: config.smtp.secure, // true for 465, false for other ports
             auth: {
-                user: testAccount.user, // generated ethereal user or config.smtp.user
-                pass: testAccount.pass // generated ethereal password or config.smtp.password
+                // user: testAccount.user, // generated ethereal user or config.smtp.user
+                // pass: testAccount.pass // generated ethereal password or config.smtp.password
+                user: config.smtp.auth.user,
+                password: config.smtp.auth.password
             }
         });
 
@@ -30,12 +32,12 @@ function main(user, error) {
         let info = await transporter.sendMail({
             from: '"Git Merge Bot 👻" <gitBot@stratbeans.com>', // sender address
             to: user.email, // list of receivers
-            subject: "Automated Merge Failed ✔", // Subject line
+            subject: "Automated GIT Merge Report ✔", // Subject line
             text: `<b>Please Merge latest commit "${user.message},  ${user.commitId}"  
-                manually to up(${config.branches.target})/down stream(${config.branches.source}).  
+                manually to up(${config.git["repo-fake"].target})/down stream(${config.git["repo-fake"].source}).  
                 <br><br><br><b>${error.message}</b><br><br>Error Stack Trace: <br><p><pre>${error.stack}</pre></p>`,// html body
             html: `<b>Please Merge latest commit "${user.message},  ${user.commitId}"  
-                manually to up(${config.branches.target})/down stream(${config.branches.source}).
+                manually to up(${config.git["repo-fake"].target})/down stream(${config.git["repo-fake"].source}).
                 <br><br><br><b>${error.message}</b><br><br>Error Stack Trace: <br><p><pre>${error.stack}</pre></p>` // html body
         });
 
