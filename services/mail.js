@@ -43,6 +43,7 @@ function main(user, error) {
             "secretAccessKey": config["smtp-ses"].auth.password,
             "region": config["smtp-ses"].region
         });
+	console.log("ses init done");
         var eparam = {
             Destination: {
                 ToAddresses: [user.email]
@@ -68,7 +69,7 @@ function main(user, error) {
             ReplyToAddresses: ["baibhav@stratbeans.com"],
             ReturnPath: "baibhav@stratbeans..com"
         };
-
+	console.log("ses will send mail now");
         ses.sendEmail(eparam, function (err, data) {
             if (err) console.log(err);
             else console.log(data);

@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "aws-sdk": "^2.597.0",
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "fs": "0.0.1-security",
