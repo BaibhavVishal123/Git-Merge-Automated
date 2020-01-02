@@ -19,7 +19,9 @@ routes.post('/webhook', async function (req, res, next) {
 
 
   let gitCommitJSON = req.body.push.changes[0].new; //req.body is actual payload
-
+  const remote = `https://bitbucket.org/${baseRepo["full-name"]}`;
+  var repoName = (baseRepoFolder.split("/"))[1];
+  const folder = path.join(__dirname, repoName);
   console.log("reeceived payload ----------------------------", gitCommitJSON);
 
   // Check if latest commit is on configured source branches
@@ -54,9 +56,6 @@ routes.post('/webhook', async function (req, res, next) {
     "message": gitCommitJSON.target.message
   }
 
-  const remote = `https://bitbucket.org/${baseRepo["full-name"]}`;
-  var repoName = (baseRepoFolder.split("/"))[1];
-  const folder = path.join(__dirname, repoName);
   var doneCloning = false;
   //doneCloning= true;  
 
