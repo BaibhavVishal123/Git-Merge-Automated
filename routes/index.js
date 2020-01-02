@@ -92,7 +92,7 @@ routes.post('/webhook', async function (req, res, next) {
   }
   catch (err) {
     console.log("Deleting Repo due to: ", err);
-    deleteFolderRecursive(folder);
+    await Promise.resolve(deleteFolderRecursive(folder));
     triggerSlackEmail(authorNew, true, err);
     res.status(400).send(err);
   }
@@ -117,13 +117,13 @@ routes.post('/webhook', async function (req, res, next) {
       // succes slack noti asynchronous call
       triggerSlackEmail(authorNew, false);
       console.log("Deleting Repo");
-      deleteFolderRecursive(folder);
+      await Promise.resolve(deleteFolderRecursive(folder));
       resolve(true);
     }
     catch (err) {
       // delete repo folder no waiting
       console.log("Deleting Repo due to: ", err);
-      deleteFolderRecursive(folder);
+      await Promise.resolve(deleteFolderRecursive(folder));
       triggerSlackEmail(authorNew, true, err);
       res.status(400).send("Bad Merge  Branches");
       return false;
