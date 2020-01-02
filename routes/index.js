@@ -59,30 +59,43 @@ routes.post('/webhook', async function (req, res, next) {
   var doneCloning = false;
   //doneCloning= true;  
   console.log("cloning will happen", doneCloning);
-  if (!doneCloning) {
-    doneCloning = await git().
+  try {
+    if (!doneCloning) {
+      doneCloning = await git().
+        outputHandler((command, stdout, stderr) => {
+          // stdout.pipe(process.stdout);
+          stderr.pipe(process.stderr);
+        }).clone(remote);
+    }
+
+    console.log("Checkout Branches in Progress");
+    //TODO: Comment out and check
+
+    while (!fs.existsSync(folder)) {
+      continue;
+    }
+
+    await git(baseRepoFolder).
       outputHandler((command, stdout, stderr) => {
         // stdout.pipe(process.stdout);
+        console.log(command);
         stderr.pipe(process.stderr);
-      }).clone(remote);
+      }).checkout([source]);
+
+    await git(baseRepoFolder).
+      outputHandler((command, stdout, stderr) => {
+        // stdout.pipe(process.stdout);
+        console.log(command);
+        stderr.pipe(process.stderr);
+      }).checkout([target]);
+
   }
-
-  console.log("Checkout Branches in Progress");
-  //TODO: Comment out and check
-  await git(baseRepoFolder).
-    outputHandler((command, stdout, stderr) => {
-      // stdout.pipe(process.stdout);
-      console.log(command);
-      stderr.pipe(process.stderr);
-    }).checkout([source]);
-
-  await git(baseRepoFolder).
-    outputHandler((command, stdout, stderr) => {
-      // stdout.pipe(process.stdout);
-      console.log(command);
-      stderr.pipe(process.stderr);
-    }).checkout([target]);
-
+  catch (err) {
+    console.log("Deleting Repo due to: ", err);
+    deleteFolderRecursive(baseRepoFolder);
+    triggerSlackEmail(authorNew, true, err);
+    res.status(400).send(err);
+  }
   var merge = await new Promise(async (resolve, reject) => {
     try {
       await git(baseRepoFolder).
