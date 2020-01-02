@@ -33,10 +33,11 @@ routes.post('/webhook', async function (req, res, next) {
     }
   });
   console.log("PUSH Source branch: ", source);
-
+  console.log("execution", execution);
   if (!execution) {
     // exit program
-    res.status(200).send("Invalid Branch");
+    console.log("will exit this request");
+    return res.status(422).send("Invalid Branch");
   }
 
   let user = gitCommitJSON.target.author.raw;
@@ -53,11 +54,8 @@ routes.post('/webhook', async function (req, res, next) {
   }
 
   const remote = `https://bitbucket.org/${baseRepo["full-name"]}`;
-  // check routes?
-  const folder = path.join(__dirname, baseRepoFolder);
-
   var repoName = (baseRepoFolder.split("/"))[1];
-
+  const folder = path.join(__dirname, repoName);
   var doneCloning = false;
   //doneCloning= true;  
 
@@ -94,7 +92,7 @@ routes.post('/webhook', async function (req, res, next) {
   }
   catch (err) {
     console.log("Deleting Repo due to: ", err);
-    deleteFolderRecursive(baseRepoFolder);
+    deleteFolderRecursive(folder);
     triggerSlackEmail(authorNew, true, err);
     res.status(400).send(err);
   }
@@ -116,9 +114,7 @@ routes.post('/webhook', async function (req, res, next) {
       console.log("pushed!");
 
 
-      deleteFolderRecursive(baseRepoFolder);
       // succes slack noti asynchronous call
-
       triggerSlackEmail(authorNew, false);
       console.log("Deleting Repo");
       deleteFolderRecursive(folder);
@@ -127,14 +123,14 @@ routes.post('/webhook', async function (req, res, next) {
     catch (err) {
       // delete repo folder no waiting
       console.log("Deleting Repo due to: ", err);
-      deleteFolderRecursive(baseRepoFolder);
+      deleteFolderRecursive(folder);
       triggerSlackEmail(authorNew, true, err);
       res.status(400).send("Bad Merge  Branches");
       return false;
     }
   })
 
-  console.log(merge);
+  console.log("Program Gracefully end: ", merge);
 
   res.status(200).send('ok');
   //res.render('index', {title: 'WebHook'});
