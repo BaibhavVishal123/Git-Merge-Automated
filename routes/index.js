@@ -51,8 +51,7 @@ routes.post('/webhook', async function (req, res, next) {
     "message": gitCommitJSON.target.message
   }
 
-  const REPO = 'bitbucket.org/stratbeans/atum-barium';
-  const remote = `https://${REPO}`;
+  const remote = `https://bitbucket.org/${baseRepo["full-name"]}`;
   // check routes?
   const folder = path.join(__dirname, baseRepoFolder);
 
