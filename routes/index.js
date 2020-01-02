@@ -61,10 +61,13 @@ routes.post('/webhook', async function (req, res, next) {
 
   try {
     if (!doneCloning) {
-      await Promise.all((git().outputHandler((command, stdout, stderr) => {
+      console.log("abc", remote, "\n", folder);
+      await Promise.all([git().outputHandler((command, stdout, stderr) => {
         // stdout.pipe(process.stdout);
         stderr.pipe(process.stderr);
-      }).clone(remote)));
+      }).clone(remote), setTimeout(function () {
+        console.log("waited for ")
+      }, 5000)]);
       doneCloning = true;
     }
     console.log("cloning happened", doneCloning);
