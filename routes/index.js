@@ -15,7 +15,7 @@ const target = baseRepo.target;
 const mail = require("../services/mail.js");
 const slack = require("../services/slack.js")
 routes.post('/webhook', async function (req, res, next) {
-  console.log(JSON.stringify(req.body, null, 2));
+  // console.log(JSON.stringify(req.body, null, 2));
 
 
   let gitCommitJSON = req.body.push.changes[0].new; //req.body is actual payload
