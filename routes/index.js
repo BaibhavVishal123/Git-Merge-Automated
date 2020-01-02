@@ -58,32 +58,29 @@ routes.post('/webhook', async function (req, res, next) {
 
   var doneCloning = false;
   //doneCloning= true;  
-  console.log("cloning will happen", doneCloning);
+
   try {
     if (!doneCloning) {
-      doneCloning = await git().
-        outputHandler((command, stdout, stderr) => {
-          // stdout.pipe(process.stdout);
-          stderr.pipe(process.stderr);
-        }).clone(remote);
+      doneCloning = await Promise.resolve(git().outputHandler((command, stdout, stderr) => {
+        // stdout.pipe(process.stdout);
+        stderr.pipe(process.stderr);
+      }).clone(remote));
     }
-
+    console.log("cloning happened", doneCloning);
     console.log("Cloning done:", fs.existsSync(folder));
     console.log("Checkout Branches in Progress");
 
-    await git(baseRepoFolder).
-      outputHandler((command, stdout, stderr) => {
-        // stdout.pipe(process.stdout);
-        console.log(command);
-        stderr.pipe(process.stderr);
-      }).checkout([source]);
+    await Promise.resolve(git(baseRepoFolder).outputHandler((command, stdout, stderr) => {
+      // stdout.pipe(process.stdout);
+      console.log(command);
+      stderr.pipe(process.stderr);
+    }).checkout([source]));
 
-    await git(baseRepoFolder).
-      outputHandler((command, stdout, stderr) => {
-        // stdout.pipe(process.stdout);
-        console.log(command);
-        stderr.pipe(process.stderr);
-      }).checkout([target]);
+    await Promise.resolve(git(baseRepoFolder).outputHandler((command, stdout, stderr) => {
+      // stdout.pipe(process.stdout);
+      console.log(command);
+      stderr.pipe(process.stderr);
+    }).checkout([target]));
 
   }
   catch (err) {
@@ -94,22 +91,19 @@ routes.post('/webhook', async function (req, res, next) {
   }
   var merge = await new Promise(async (resolve, reject) => {
     try {
-      await git(baseRepoFolder).
-        outputHandler((command, stdout, stderr) => {
-          // stdout.pipe(process.stdout);
-          stderr.pipe(process.stderr);
-        }).mergeFromTo(source, target, `-m Merging ${branches[0]} to ${target}`);
+      await Promise.resolve(git(baseRepoFolder).outputHandler((command, stdout, stderr) => {
+        // stdout.pipe(process.stdout);
+        stderr.pipe(process.stderr);
+      }).mergeFromTo(source, target, `-m Merging ${branches[0]} to ${target}`));
 
       console.log("merged!");
 
       // TODO: check push
-      await git(baseRepoFolder).
-        outputHandler((command, stdout, stderr) => {
-          stderr.pipe(process.stderr);
-        }).
-        push("origin", target, () => {
-          console.log(`${target} pushed`);
-        });
+      await Promise.resolve(git(baseRepoFolder).outputHandler((command, stdout, stderr) => {
+        stderr.pipe(process.stderr);
+      }).push("origin", target, () => {
+        console.log(`${target} pushed`);
+      }));
       console.log("pushed!");
 
 
