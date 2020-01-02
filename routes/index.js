@@ -66,9 +66,9 @@ routes.post('/webhook', async function (req, res, next) {
         // stdout.pipe(process.stdout);
         stderr.pipe(process.stderr);
       }).clone(remote), setTimeout(function () {
-        console.log("waited for ")
+        console.log("waited for 5 sec");
+        doneCloning = true;
       }, 5000)]);
-      doneCloning = true;
     }
     console.log("cloning happened", doneCloning);
     console.log("Cloning done:", fs.existsSync(folder));
