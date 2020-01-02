@@ -1,5 +1,5 @@
-const config = require("../config/config");
-var MY_SLACK_WEBHOOK_URL = config.slack.url;
+const config = require("../config/test.config");
+var MY_SLACK_WEBHOOK_URL = config.slack["url-fake"];
 //'https://myaccountname.slack.com/services/hooks/incoming-webhook?token=myToken';
 var slack = require('slack-notify')(MY_SLACK_WEBHOOK_URL);
 
@@ -17,8 +17,8 @@ module.exports.sendFail = function (user, error) {
             'Email': user.email,
             'latestCommitId': user.commitId,
             'commitMessage': user.message,
-	    'error': error.message,
-	    'Error Description': "Check Mail for StackTrace" 
+            'error': error.message,
+            'Error Description': "Check Mail for StackTrace"
         }
     }, function (err) {
         if (err) {
