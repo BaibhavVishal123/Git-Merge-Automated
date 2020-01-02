@@ -37,6 +37,7 @@ routes.post('/webhook', async function (req, res, next) {
   if (!execution) {
     // exit program
     console.log("will exit this request");
+    await Promise.resolve(deleteFolderRecursive(folder));
     return res.status(422).send("Invalid Branch");
   }
 
