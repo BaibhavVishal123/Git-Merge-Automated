@@ -32,6 +32,7 @@ routes.post('/webhook', async function (req, res, next) {
       source = element;
     }
   });
+  console.log("PUSH Source branch: ", source);
 
   if (!execution) {
     // exit program
@@ -71,12 +72,14 @@ routes.post('/webhook', async function (req, res, next) {
   await git(baseRepoFolder).
     outputHandler((command, stdout, stderr) => {
       // stdout.pipe(process.stdout);
+      console.log(command);
       stderr.pipe(process.stderr);
     }).checkout([source]);
 
   await git(baseRepoFolder).
     outputHandler((command, stdout, stderr) => {
       // stdout.pipe(process.stdout);
+      console.log(command);
       stderr.pipe(process.stderr);
     }).checkout([target]);
 
