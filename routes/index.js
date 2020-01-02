@@ -56,6 +56,8 @@ routes.post('/webhook', async function (req, res, next) {
   // check routes?
   const folder = path.join(__dirname, baseRepoFolder);
 
+  var repoName = (baseRepoFolder.split("/"))[1];
+
   var doneCloning = false;
   //doneCloning= true;  
 
@@ -77,13 +79,13 @@ routes.post('/webhook', async function (req, res, next) {
     console.log("Checkout Branches in Progress");
 
     console.log("BASE REPO FOLDER:", baseRepoFolder);
-    await Promise.resolve(git(baseRepoFolder).outputHandler((command, stdout, stderr) => {
+    await Promise.resolve(git(repoName).outputHandler((command, stdout, stderr) => {
       // stdout.pipe(process.stdout);
       console.log(command);
       stderr.pipe(process.stderr);
     }).checkout([source]));
 
-    await Promise.resolve(git(baseRepoFolder).outputHandler((command, stdout, stderr) => {
+    await Promise.resolve(git(repoName).outputHandler((command, stdout, stderr) => {
       // stdout.pipe(process.stdout);
       console.log(command);
       stderr.pipe(process.stderr);
@@ -98,7 +100,7 @@ routes.post('/webhook', async function (req, res, next) {
   }
   var merge = await new Promise(async (resolve, reject) => {
     try {
-      await Promise.resolve(git(baseRepoFolder).outputHandler((command, stdout, stderr) => {
+      await Promise.resolve(git(repoName).outputHandler((command, stdout, stderr) => {
         // stdout.pipe(process.stdout);
         stderr.pipe(process.stderr);
       }).mergeFromTo(source, target, `-m Merging ${branches[0]} to ${target}`));
@@ -106,7 +108,7 @@ routes.post('/webhook', async function (req, res, next) {
       console.log("merged!");
 
       // TODO: check push
-      await Promise.resolve(git(baseRepoFolder).outputHandler((command, stdout, stderr) => {
+      await Promise.resolve(git(repoName).outputHandler((command, stdout, stderr) => {
         stderr.pipe(process.stderr);
       }).push("origin", target, () => {
         console.log(`${target} pushed`);
