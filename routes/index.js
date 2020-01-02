@@ -68,12 +68,8 @@ routes.post('/webhook', async function (req, res, next) {
         }).clone(remote);
     }
 
+    console.log("Cloning done:", fs.existsSync(folder));
     console.log("Checkout Branches in Progress");
-    //TODO: Comment out and check
-
-    while (!fs.existsSync(folder)) {
-      continue;
-    }
 
     await git(baseRepoFolder).
       outputHandler((command, stdout, stderr) => {
