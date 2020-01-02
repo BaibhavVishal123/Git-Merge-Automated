@@ -4,9 +4,9 @@ const git = require('simple-git/promise');
 const fs = require('fs');
 const path = require('path');
 
-const config = require("../config/test.config");
+const config = require("../config/config");
 
-const baseRepo = config.git["repo-fake"]
+const baseRepo = config.git.repo;
 const baseRepoFolder = baseRepo["full-name"];
 const branches = baseRepo.source;
 const target = baseRepo.target;

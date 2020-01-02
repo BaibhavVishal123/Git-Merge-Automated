@@ -1,4 +1,4 @@
-const config = require("../config/test.config");
+const config = require("../config/config");
 var MY_SLACK_WEBHOOK_URL = config.slack["url-fake"];
 //'https://myaccountname.slack.com/services/hooks/incoming-webhook?token=myToken';
 var slack = require('slack-notify')(MY_SLACK_WEBHOOK_URL);

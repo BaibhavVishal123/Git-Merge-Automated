@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const config = require("../config/test.config")
+const config = require("../config/config")
 
 function main(user, error) {
 
