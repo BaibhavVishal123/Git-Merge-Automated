@@ -59,9 +59,11 @@ routes.post('/webhook', async function (req, res, next) {
   var doneCloning = false;
   //doneCloning= true;  
 
+  //abc https://bitbucket.org/stratbeans/atum-barium 
+  // /home/ubuntu/baibhav/Git-Merge-Automated/routes/stratbeans/atum-barium
   try {
     if (!doneCloning) {
-      console.log("abc", remote, "\n", folder);
+      console.log("Remote: ", remote, "\n Folder: ", folder, "base: ", baseRepoFolder);
       await Promise.all([git().outputHandler((command, stdout, stderr) => {
         // stdout.pipe(process.stdout);
         stderr.pipe(process.stderr);
@@ -71,9 +73,10 @@ routes.post('/webhook', async function (req, res, next) {
       }, 5000)]);
     }
     console.log("cloning happened", doneCloning);
-    console.log("Cloning done:", fs.existsSync(folder));
+    console.log("Cloning done:", fs.existsSync(baseRepoFolder));
     console.log("Checkout Branches in Progress");
 
+    console.log("BASE REPO FOLDER:", baseRepoFolder);
     await Promise.resolve(git(baseRepoFolder).outputHandler((command, stdout, stderr) => {
       // stdout.pipe(process.stdout);
       console.log(command);
