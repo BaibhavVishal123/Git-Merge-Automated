@@ -51,12 +51,12 @@ function main(user, error) {
                 Body: {
                     Html: {
                         Data: `<b>Please Merge latest commit "${user.message},  ${user.commitId}"  
-                        manually to up(${config.git["repo-fake"].target})/down stream(${config.git["repo-fake"].source}).  
+                        manually to (${config.git.repo.target}) from (${config.git["repo-fake"].source}).  
                         <br><br><br><b>${error.message}</b><br><br>Error Stack Trace: <br><p><pre>${error.stack}</pre></p>`
                     },
                     Text: {
                         Data: `<b>Please Merge latest commit "${user.message},  ${user.commitId}"  
-                        manually to up(${config.git["repo-fake"].target})/down stream(${config.git["repo-fake"].source}).  
+                        manually to ${config.git.repo.target}  from (${config.git.repo.source}).  
                         <br><br><br><b>${error.message}</b><br><br>Error Stack Trace: <br><p><pre>${error.stack}</pre></p>`
                     }
                 },
