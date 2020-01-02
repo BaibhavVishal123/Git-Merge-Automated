@@ -21,7 +21,7 @@ routes.post('/webhook', async function (req, res, next) {
   let gitCommitJSON = req.body.push.changes[0].new; //req.body is actual payload
   const remote = `https://bitbucket.org/${baseRepo["full-name"]}`;
   var repoName = (baseRepoFolder.split("/"))[1];
-  const folder = path.join(__dirname, repoName);
+  const folder = path.join(__dirname, "..", repoName);
   console.log("reeceived payload ----------------------------", gitCommitJSON);
 
   // Check if latest commit is on configured source branches
@@ -39,6 +39,7 @@ routes.post('/webhook', async function (req, res, next) {
   if (!execution) {
     // exit program
     console.log("will exit this request");
+    console.log("FOLDER: ", folder);
     await Promise.resolve(deleteFolderRecursive(folder));
     return res.status(422).send("Invalid Branch");
   }
