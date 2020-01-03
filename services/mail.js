@@ -26,10 +26,10 @@ function main(user, error) {
             to: user.email, // list of receivers
             subject: "Automated GIT Merge Report ✔", // Subject line
             text: `<b>Please Merge latest commit "${user.message},  ${user.commitId}"  
-                manually to up(${config.git["repo-fake"].target})/down stream(${config.git["repo-fake"].source}).  
+                manually to up(${config.git.repo.target})/down stream(${config.git.fake.source}).  
                 <br><br><br><b>${error.message}</b><br><br>Error Stack Trace: <br><p><pre>${error.stack}</pre></p>`,// html body
             html: `<b>Please Merge latest commit "${user.message},  ${user.commitId}"  
-                manually to up(${config.git["repo-fake"].target})/down stream(${config.git["repo-fake"].source}).
+                manually to up(${config.git.fake.target})/down stream(${config.git.fake.source}).
                 <br><br><br><b>${error.message}</b><br><br>Error Stack Trace: <br><p><pre>${error.stack}</pre></p>` // html body
         });
 
@@ -43,7 +43,7 @@ function main(user, error) {
             "secretAccessKey": config["smtp-ses"].auth.password,
             "region": config["smtp-ses"].region
         });
-	console.log("ses init done");
+        console.log("ses init done");
         var eparam = {
             Destination: {
                 ToAddresses: [user.email]
@@ -69,7 +69,7 @@ function main(user, error) {
             ReplyToAddresses: ["baibhav@stratbeans.com"],
             ReturnPath: "baibhav@stratbeans..com"
         };
-	console.log("ses will send mail now");
+        console.log("ses will send mail now");
         ses.sendEmail(eparam, function (err, data) {
             if (err) console.log(err);
             else console.log(data);
